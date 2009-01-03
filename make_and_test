@@ -1,6 +1,0 @@
-#!/usr/bin/env escript
-
-main(_) ->
-  make:all([report_errors]),
-  string_tree:test().
-
