@@ -1,5 +1,5 @@
 -module(string_tree).
--export([format/1, test/0]).
+-export([format/1]).
 
 format(StringTree) -> format(StringTree, 0).
 
@@ -19,12 +19,4 @@ format({String, []}, Indentation) ->
 indented_print(String, Indentation) ->
   IndentationString = string:chars($ , Indentation * 2),
   io:format("~s- ~s~n", [IndentationString, String]).
-
-test() ->
-  io:format("Single Leaf Test~n"),
-  single_leaf_test().
-
-single_leaf_test() ->
-  Foo = {"Foo", []},
-  format(Foo).
 
