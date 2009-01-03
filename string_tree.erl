@@ -2,8 +2,11 @@
 -export([format/1]).
 -include_lib("eunit/include/eunit.hrl").
 
-% If we made leafs to be just strings then the same method that prints the
-% string in a non-leaf node could be used to handle leaf nodes.
+% TODO:
+% - If we made leafs to be just strings then the same method that prints the
+%   string in a non-leaf node could be used to handle leaf nodes.
+% - Output shouldn't be passed to every level, the lowest levels should just
+%   return how they're to be represented and higher levels should join them.
 
 format(StringTree) -> format(StringTree, 0, "").
 
@@ -50,25 +53,15 @@ siblings_test() ->
   ?assert(format(Foo) == ExpectedOutput).
 
 family_tree_test() ->
-  FamilyTree = {
-    "Me",
-    [
-      {
-        "Mother",
-        [
-          { "Grandmother", [] },
-          { "Grandfather", [] }
-        ]
-      },
-      {
-        "Father",
-        [
-          { "Nonna", [] },
-          { "Pops", [] }
-        ]
-      }
-    ]
-  },
+  Mother = {"Mother", [
+    {"Grandmother", []},
+    {"Grandfather", []}
+  ]},
+  Father = {"Father", [
+    {"Nonna", []},
+    {"Pops", []}
+  ]},
+  Me = {"Me", [Mother, Father]},
   ExpectedOutput = "- Me
   - Mother
     - Grandmother
@@ -77,4 +70,4 @@ family_tree_test() ->
     - Nonna
     - Pops
 ",
-  ?assert(format(FamilyTree) == ExpectedOutput).
+  ?assert(format(Me) == ExpectedOutput).
