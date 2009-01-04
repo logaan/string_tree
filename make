@@ -1,4 +1,4 @@
-#!/usr/bin/env escript
+#!/opt/local/lib/erlang/bin/escript
 
 main(["test"]) ->
   make:all([report_errors]),
