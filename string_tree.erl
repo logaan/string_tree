@@ -15,20 +15,20 @@ format(StringTree) -> format(StringTree, 0, "").
 % Leaves are in the format {String, []}
 % Regular nodes are in the format {String, [Node1, Leaf1, ... NodeN, LeafN]}
 format({String, []}, Indentation, Output) ->
-  indented_print(String, Indentation, Output);
+  format(String, Indentation, Output);
 
 format({String, Children}, Indentation, Output) ->
-  NewOutput = indented_print(String, Indentation, Output),
+  NewOutput = format(String, Indentation, Output),
   format(Children, Indentation + 1, NewOutput);
 
-format([H|T], Indentation, Output) ->
+format([], Indentation, Output) ->
+  Output;
+
+format([H|T], Indentation, Output) when is_tuple(H)->
   HeadOutput = format(H, Indentation, Output),
   format(T, Indentation, HeadOutput);
 
-format([], Indentation, Output) ->
-  Output.
-
-indented_print(String, Indentation, Output) ->
+format(String, Indentation, Output) ->
   IndentationString = string:chars($ , Indentation * 2),
   string:join([Output, IndentationString, "- ", String, "\n"], "").
 
@@ -39,20 +39,20 @@ indented_print(String, Indentation, Output) ->
 single_leaf_test() ->
   SingleLeaf = {"Foo", []},
   ExpectedOutput = "- Foo\n",
-  ?assert(format(SingleLeaf) == ExpectedOutput).
+  ?assertEqual(ExpectedOutput, format(SingleLeaf)).
 
 parent_child_test() ->
   Bar = {"Bar", []},
   Foo = {"Foo", [Bar]},
   ExpectedOutput = "- Foo\n  - Bar\n",
-  ?assert(format(Foo) == ExpectedOutput).
+  ?assertEqual(ExpectedOutput, format(Foo)).
 
 siblings_test() ->
   Bar = {"Bar", []},
   Baz = {"Baz", []},
   Foo = {"Foo", [Bar, Baz]},
   ExpectedOutput = "- Foo\n  - Bar\n  - Baz\n",
-  ?assert(format(Foo) == ExpectedOutput).
+  ?assertEqual(ExpectedOutput, format(Foo)).
 
 family_tree_test() ->
   Mother = {"Mother", [
@@ -72,4 +72,4 @@ family_tree_test() ->
     - Nonna
     - Pops
 ",
-  ?assert(format(Me) == ExpectedOutput).
+  ?assertEqual(ExpectedOutput, format(Me)).
