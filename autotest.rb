@@ -40,6 +40,7 @@ system "launchctl unload #{PLIST_PATH}"
 system "launchctl load #{PLIST_PATH}"
 
 # Start watching any output
+system "rm #{LOG_PATH}"
 system "touch #{LOG_PATH}"
 system "clear"
 system "tail -f #{LOG_PATH}"
