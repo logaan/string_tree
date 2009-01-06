@@ -7,6 +7,8 @@
 %   string in a non-leaf node could be used to handle leaf nodes.
 % - Output shouldn't be passed to every level, the lowest levels should just
 %   return how they're to be represented and higher levels should join them.
+% - There might be a way to cut down on code by directly working on the contents
+%   of the head of a list like [{String, Children} | Tail]
 
 format(StringTree) -> format(StringTree, 0, "").
 
