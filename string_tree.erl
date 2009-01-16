@@ -1,5 +1,5 @@
 -module(string_tree).
--export([format/1]).
+-export([format/1, parse/1]).
 -include_lib("eunit/include/eunit.hrl").
 
 % TODO:
@@ -27,6 +27,22 @@ format(String, Indentation, Output) ->
   IndentationString = string:chars($ , Indentation * 2),
   string:join([Output, IndentationString, "- ", String, "\n"], "").
 
+
+
+parse(String) ->
+  parse([], string:tokens(String, ".?!")).
+
+parse([], [CurrentSentence | Sentences]) ->
+  StrippedSentance = string:strip(CurrentSentence),
+  parse([StrippedSentance], Sentences);
+
+parse(Tree, [CurrentSentence | Sentences]) ->
+  StrippedSentance = string:strip(CurrentSentence),
+  parse([StrippedSentance|Tree], Sentences);
+
+parse(Tree, []) ->
+  Tree.
+
 %
 % FORMAT TESTS
 %
@@ -47,16 +63,27 @@ siblings_test() ->
   ?assertEqual(ExpectedOutput, format(Foo)).
 
 family_tree_test() ->
-  Mother = {"Mother", ["Grandmother", "Grandfather"]},
+  Mother = {"Mother", ["Grand Mother", "Grand Father"]},
   Father = {"Father", ["Nonna", "Pops"]},
   Me = {"Me", [Mother, Father]},
   ExpectedOutput = "- Me
   - Mother
-    - Grandmother
-    - Grandfather
+    - Grand Mother
+    - Grand Father
   - Father
     - Nonna
     - Pops
 ",
   ?assertEqual(ExpectedOutput, format(Me)).
+
+
+single_sentence_test() ->
+  Quote = "If you prick us do we not bleed?",
+  ExpectedOutput = ["If you prick us do we not bleed"],
+  ?assertEqual(ExpectedOutput, parse(Quote)).
+
+unmatching_two_sentence_test() ->
+  Quote = "If you prick us do we not bleed? Goats love grass.",
+  ExpectedOutput = ["Goats love grass", "If you prick us do we not bleed"],
+  ?assertEqual(ExpectedOutput, parse(Quote)).
 
